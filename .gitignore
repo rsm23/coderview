@@ -71,3 +71,8 @@ typings/
 
 # Serverless directories
 .serverless
+
+
+# Resources
+./public/stylesheets/
+./public/javascripts/
