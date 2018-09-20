@@ -74,5 +74,5 @@ typings/
 
 
 # Resources
-./public/stylesheets/
-./public/javascripts/
+public/stylesheets/
+public/javascripts/
