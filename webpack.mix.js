@@ -14,5 +14,6 @@ let mix = require('laravel-mix');
 require('laravel-mix-tailwind');
 
 mix
+    .js('resources/app.js', 'public/javascripts/main.js')
     .sass('resources/app.scss', 'public/stylesheets/style.css')
     .tailwind();
