@@ -9,20 +9,26 @@
                            for="grid-full-name">
                         Full Name
                     </label>
-                    <input :class="{ 'border border-red' : errorN }"
-                           class="appearance-none block w-full bg-grey-lighter text-grey-darker rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-full-name" placeholder="Jane"
-                           type="text" v-model="fullName">
-                    <p class="text-red text-xs italic" v-if="errorE">The name field is required.</p>
+                    <input :class="{ 'border border-red' : errors.has('name') }"
+                           class="appearance-none block w-full bg-grey-lighter text-grey-darker rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                           id="grid-full-name" placeholder="Jane"
+                           type="text"
+                           name="name"
+                           v-model="fullName" v-validate="'required'">
+                    <p class="text-red text-xs italic" v-if="errors.has('name')">The name field is required.</p>
                 </div>
                 <div class="w-full md:w-1/2 px-3">
                     <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2"
                            for="grid-email">
                         Email
                     </label>
-                    <input :class="{ 'border border-red' : errorE }"
-                           @blur="checkError('email')" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-grey" id="grid-email" placeholder="email@server.com"
-                           type="email" v-model="email">
-                    <p class="text-red text-xs italic" v-if="errorE">The email field is required.</p>
+                    <input :class="{ 'border border-red' : errors.has('email') }"
+                           class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-grey"
+                           id="grid-email"
+                           placeholder="email@server.com" type="email"
+                           name="email"
+                           v-model="email" v-validate="'email|required'">
+                    <p class="text-red text-xs italic" v-if="errors.has('email')">The email field is required.</p>
                 </div>
             </div>
             <div class="flex flex-wrap -mx-3 mb-6">
@@ -32,11 +38,12 @@
                         Your Message
                     </label>
                     <textarea
-                            :class="{ 'border border-red' : errorM }"
-                            @blur="checkError('message')"
-                            class="appearance-none block w-full h-64 bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-grey" id="message" name="message"
-                            v-model="message"></textarea>
-                    <p class="text-red text-xs italic" v-if="errorM">The message field is required.</p>
+                            :class="{ 'border border-red' : errors.has('message') }"
+                            class="appearance-none block w-full h-64 bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-grey"
+                            id="message"
+                            name="message" v-model="message"
+                            v-validate="'required'"></textarea>
+                    <p class="text-red text-xs italic" v-if="errors.has('message')">The message field is required.</p>
                 </div>
             </div>
             <button class="bg-blue hover:bg-blue-dark text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -78,51 +85,31 @@
 <script>
     export default {
         data: () => ({
-            errors: [],
             fullName: '',
             email: '',
             message: '',
             submitted: false
         }),
-        computed: {
-            errorM: function () {
-                return this.inArray('message', this.errors)
-            },
-            errorN: function () {
-                return this.inArray('name', this.errors)
-            },
-            errorE: function () {
-                return this.inArray('email', this.errors)
-            }
-        },
         methods: {
             checkForm: function () {
-                if (this.fullName && this.email && this.message) {
-                    // TODO: Submit to the server and get reponse .
-                    this.submitted = true;
-                    return true;
-                }
+                this.$validator.validateAll().then((result) => {
+                    if (result) {
+                        let body = {
+                            name : this.fullName,
+                            email : this.email,
+                            message: this.message
+                        };
+                        axios.post('/contact', body)
+                            .then(data => {
+                                console.log(data)
+                                this.submitted = true;
+                            })
+                            .catch(error => { });
+                        return;
+                    }
 
-                this.errors = [];
-
-                if (!this.fullName) {
-                    this.errors.push('name');
-                }
-                if (!this.email) {
-                    this.errors.push('email');
-                }
-                if (!this.message) {
-                    this.errors.push('message');
-                }
-
-            },
-            inArray: function (needle, haystack) {
-                var length = haystack.length;
-                for (var i = 0; i < length; i++) {
-                    if (haystack[i] == needle)
-                        return true;
-                }
-                return false;
+                    alert('Correct them errors!');
+                });
             }
         }
     }
