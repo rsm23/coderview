@@ -11,13 +11,13 @@
       </div>
       <div :class="open ? 'block': 'hidden'" class="w-full flex-grow sm:flex sm:items-center sm:w-auto">
         <div class="text-sm sm:flex-grow">
-          <a href="#responsive-header" class="no-underline block mt-4 sm:inline-block sm:mt-0 text-teal-lighter hover:text-white mr-4">
+          <a href="/" class="no-underline block mt-4 sm:inline-block sm:mt-0 text-teal-lighter hover:text-white mr-4">
             Home
           </a>
-          <a href="#responsive-header" class="no-underline block mt-4 sm:inline-block sm:mt-0 text-teal-lighter hover:text-white mr-4">
+          <a href="/about" class="no-underline block mt-4 sm:inline-block sm:mt-0 text-teal-lighter hover:text-white mr-4">
             About
           </a>
-          <a href="#responsive-header" class="no-underline block mt-4 sm:inline-block sm:mt-0 text-teal-lighter hover:text-white">
+          <a href="/contact" class="no-underline block mt-4 sm:inline-block sm:mt-0 text-teal-lighter hover:text-white">
             Contact
           </a>
         </div>
