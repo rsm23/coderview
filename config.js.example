@@ -7,5 +7,7 @@ module.exports = {
             user : '',
             pass : ''
         }
-    }
+    },
+    dbConnectionString: 'mongodb://127.0.0.1:27017/codereview',
+    sessionKey: 'howdyCodeReview'
 }
