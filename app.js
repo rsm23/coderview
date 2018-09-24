@@ -1,24 +1,24 @@
-const createError = require('http-errors');
-const express = require('express');
-const expressValidator = require('express-validator');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
+let createError = require('http-errors');
+let express = require('express');
+let expressValidator = require('express-validator');
+let path = require('path');
+let cookieParser = require('cookie-parser');
+let logger = require('morgan');
 
 
-const mongoose = require('mongoose');
-const passport = require('passport');
-const session = require('express-session');
+let mongoose = require('mongoose');
+let passport = require('passport');
+let session = require('express-session');
 
 
 require('./passport');
-const config = require('./config');
+let config = require('./config');
 
 
-const indexRouter = require('./routes/index');
-const aboutRouter = require('./routes/about');
-const contactRouter = require('./routes/contact');
-const authRouter = require('./routes/auth');
+let indexRouter = require('./routes/index');
+let aboutRouter = require('./routes/about');
+let contactRouter = require('./routes/contact');
+let authRouter = require('./routes/auth');
 
 mongoose.connect(config.dbConnectionString, {
     useCreateIndex: true,
@@ -27,7 +27,7 @@ mongoose.connect(config.dbConnectionString, {
 
 global.User = require('./models/user');
 
-const app = express();
+let app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -39,9 +39,8 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(session({
     secret: config.sessionKey,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {secure: true}
+    resave: true,
+    saveUninitialized: true
 }));
 
 app.use(passport.initialize());
@@ -50,6 +49,13 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(expressValidator());
+
+app.use((req, res, next) => {
+    if (req.isAuthenticated()) {
+        res.locals.user = req.user;
+    }
+    next();
+});
 
 app.use('/', indexRouter);
 app.use('/', authRouter);

@@ -2,9 +2,17 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 
-router.get('/login', (req, res, next) => {
-    res.render('login', {title: 'Coderview'})
-});
+router.route('/login')
+    .get((req, res, next) => {
+        res.render('login', {title: 'Login your account'});
+    })
+    .post(passport.authenticate('local', {
+        successRedirect: '/',
+        failureRedirect: '/login'
+    }), (req, res) => {
+        res.redirect('/')
+    });
+
 router.route('/register')
     .get((req, res, next) => {
         res.render('register', {title: 'Coderview'})
@@ -21,7 +29,7 @@ router.route('/register')
                 name: req.body.name,
                 email: req.body.email,
                 errorMessages: errors,
-                title : 'Coderview'
+                title: 'Coderview'
             });
         } else {
             let user = new User();
@@ -30,12 +38,17 @@ router.route('/register')
             user.setPassword(req.body.password);
             user.save((err) => {
                 if (err) {
-                    res.render('register', {errorMessages: err, title : 'Coderview'});
+                    res.render('register', {errorMessages: err, title: 'Coderview'});
                 } else {
                     res.redirect('/login');
                 }
             });
         }
     });
+
+router.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/')
+});
 
 module.exports = router;
