@@ -13,6 +13,13 @@ router.route('/login')
         res.redirect('/')
     });
 
+router.get('/auth/facebook', passport.authenticate('facebook', {scope: 'email'}));
+
+router.get('/auth/facebook/callback', passport.authenticate('facebook', {
+    successRedirect: '/',
+    failureRedirect: '/'
+}));
+
 router.route('/register')
     .get((req, res, next) => {
         res.render('register', {title: 'Coderview'})
