@@ -11,22 +11,22 @@
                 <div class="text-black font-bold">ChatBox</div>
                 <div class="text-grey text-xs" v-text="this.username ? this.username : generateUsername()"></div>
             </div>
-            <div class="messages" v-for="(msg, index) in messages" :key="index">
-                <p class="text-grey-darker text-base"><span class="font-bold">{{ msg.user }} </span>: {{ msg.message }}</p>
+            <div :key="index" class="p-3 bg-blue-darkest rounded-full text-white mt-3" v-for="(msg, index) in messages">
+                <p class="text-sm "><span
+                        class="font-bold bg-white rounded-full text-blue-darkest px-2">{{ msg.user }}</span> {{
+                    msg.message }}</p>
             </div>
-            <div class="flex items-center">
-                <form class="w-full max-w-sm" @submit.prevent="sendMessage">
-                    <div class="flex items-center">
-                        <input aria-label="Full name"
-                               class="w-full text-grey-darker border-blue-darkest border-2 text-sm py-3 rounded-l-lg px-3 focus:outline-none shadow-md"
-                               placeholder="Jane Doe" type="text" v-model="message">
-                        <button class="flex-no-shrink bg-blue-darkest border-blue-darkest text-sm py-3 text-white px-2 border-2 rounded-r-lg focus:outline-none shadow-md"
-                                type="button">
-                            Sign Up
-                        </button>
-                    </div>
-                </form>
-            </div>
+            <form @submit.prevent="sendMessage" class="w-full">
+                <div class="flex items-center mt-3">
+                    <input aria-label="Full name"
+                           class="w-full text-grey-darker border-blue-darkest border-2 text-sm py-3 rounded-l-full px-3 shadow-md focus:outline-none"
+                           placeholder="Jane Doe" type="text" v-model="message">
+                    <button class="flex-no-shrink bg-blue-darkest border-blue-darkest text-sm py-3 text-white px-2 border-2 rounded-r-full shadow-md focus:outline-none"
+                            type="button">
+                        Send
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </template>
@@ -42,7 +42,7 @@
     import io from 'socket.io-client';
 
     export default {
-        props: ['username'],
+        props: ['username','room'],
         data() {
             const code =
                 `<?php
@@ -76,7 +76,7 @@
             },
             sendMessage(e) {
                 e.preventDefault();
-
+                if(this.message === '') return;
                 this.socket.emit('chatMessage', {
                     user: this.username,
                     message: this.message
@@ -85,7 +85,8 @@
             }
         },
         mounted() {
-            this.socket.on('Message', (data) => {
+            this.socket.emit('joinRoom', {room: this.room});
+            this.socket.on('message', (data) => {
                 this.messages = [...this.messages, data];
             });
         }
