@@ -19,6 +19,7 @@ let indexRouter = require('./routes/index');
 let aboutRouter = require('./routes/about');
 let contactRouter = require('./routes/contact');
 let authRouter = require('./routes/auth');
+let taskRouter = require('./routes/task');
 
 mongoose.connect(config.dbConnectionString, {
     useCreateIndex: true,
@@ -26,6 +27,7 @@ mongoose.connect(config.dbConnectionString, {
 });
 
 global.User = require('./models/user');
+global.Task = require('./models/task');
 
 let app = express();
 
@@ -59,6 +61,8 @@ app.use((req, res, next) => {
 
 app.use('/', indexRouter);
 app.use('/', authRouter);
+app.use('/', taskRouter);
+
 app.use('/about', aboutRouter);
 app.use('/contact', contactRouter);
 
