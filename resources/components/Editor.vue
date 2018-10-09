@@ -1,33 +1,12 @@
 <template>
     <div class="lg:flex rounded shadow-lg">
-        <div class="sm:w-full md:w-full lg:w-3/4 bg-cover rounded-t lg:rounded-t-none lg:rounded-l overflow-hidden">
+        <div class="sm:w-full md:w-full lg:w-3/5 bg-cover rounded-t lg:rounded-t-none lg:rounded-l overflow-hidden">
             <div class="codemirror">
                 <!-- codemirror -->
                 <codemirror :options="cmOption" v-model="code"></codemirror>
             </div>
         </div>
-        <div class="sm:w-full md:w-full lg:w-1/4 border-r border-b border-l border-grey-light lg:border-l-0 lg:border-t lg:border-grey-light bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between">
-            <div class="mb-8 flex justify-between">
-                <div class="text-black font-bold">ChatBox</div>
-                <div class="text-grey text-xs" v-text="this.username ? this.username : generateUsername()"></div>
-            </div>
-            <div :key="index" class="p-3 bg-blue-darkest rounded-full text-white mt-3" v-for="(msg, index) in messages">
-                <p class="text-sm "><span
-                        class="font-bold bg-white rounded-full text-blue-darkest px-2">{{ msg.user }}</span> {{
-                    msg.message }}</p>
-            </div>
-            <form @submit.prevent="sendMessage" class="w-full">
-                <div class="flex items-center mt-3">
-                    <input aria-label="Full name"
-                           class="w-full text-grey-darker border-blue-darkest border-2 text-sm py-3 rounded-l-full px-3 shadow-md focus:outline-none"
-                           placeholder="Jane Doe" type="text" v-model="message">
-                    <button class="flex-no-shrink bg-blue-darkest border-blue-darkest text-sm py-3 text-white px-2 border-2 rounded-r-full shadow-md focus:outline-none"
-                            type="button">
-                        Send
-                    </button>
-                </div>
-            </form>
-        </div>
+        <chat :username="this.username" :room="this.room"></chat>
     </div>
 </template>
 
@@ -38,8 +17,6 @@
     import 'codemirror/theme/cobalt.css'
     // require active-line.js
     import 'codemirror/addon/selection/active-line.js'
-    // Socket.IO Client
-    import io from 'socket.io-client';
 
     export default {
         props: ['username','room'],
@@ -63,32 +40,8 @@
                     mode: 'application/x-httpd-php',
                     lineWrapping: true,
                     theme: 'cobalt'
-                },
-                message: '',
-                messages: [],
-                socket: io('localhost:3000')
+                }
             }
-        },
-        methods: {
-            generateUsername() {
-                let userId = Math.floor(Math.random() * 9999).toString();
-                return `User ${userId}`;
-            },
-            sendMessage(e) {
-                e.preventDefault();
-                if(this.message === '') return;
-                this.socket.emit('chatMessage', {
-                    user: this.username,
-                    message: this.message
-                });
-                this.message = ''
-            }
-        },
-        mounted() {
-            this.socket.emit('joinRoom', {room: this.room});
-            this.socket.on('message', (data) => {
-                this.messages = [...this.messages, data];
-            });
         }
     }
 </script>

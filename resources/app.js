@@ -11,6 +11,7 @@ Vue.component('nav-bar', require('./components/NavBar.vue'));
 Vue.component('contact-form', require('./components/ContactForm.vue'));
 Vue.component('codemirror', require('./components/Codemirror.vue'));
 Vue.component('editor', require('./components/Editor.vue'));
+Vue.component('chat', require('./components/Chat.vue'));
 
 // require lib
 import Vue from 'vue'
